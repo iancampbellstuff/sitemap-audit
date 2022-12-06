@@ -1,0 +1,56 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "npm",
+            "label": "start",
+            "group": {
+                "kind": "none",
+                "isDefault": true
+            },
+            "script": "start"
+        },
+        {
+            "type": "npm",
+            "label": "test",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "script": "test"
+        },
+        {
+            "type": "npm",
+            "label": "test-watch",
+            "group": "test",
+            "script": "test-watch"
+        },
+        {
+            "type": "npm",
+            "label": "lint",
+            "group": "test",
+            "script": "lint"
+        },
+        {
+            "type": "npm",
+            "label": "lint-fix",
+            "group": "test",
+            "script": "lint-fix"
+        },
+        {
+            "type": "npm",
+            "label": "open-coverage",
+            "group": "test",
+            "script": "open-coverage"
+        },
+        {
+            "type": "npm",
+            "label": "build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "script": "build"
+        }
+    ]
+}

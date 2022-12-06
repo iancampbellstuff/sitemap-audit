@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "noEmit": true,
+        "noImplicitAny": false,
+        "types": [
+            "jest"
+        ]
+    },
+    "extends": "./tsconfig.base.json"
+}

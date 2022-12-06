@@ -1,0 +1,58 @@
+{
+  "name": "sitemap-audit",
+  "version": "1.0.0",
+  "description": "This utility validates URLs for a given sitemap.",
+  "author": "iancampbellstuff",
+  "license": "ISC",
+  "private": true,
+  "main": "src/index",
+  "scripts": {
+    "prebuild": "npm run clean",
+    "build": "tsc --project tsconfig.build.json",
+    "clean": "rimraf dist",
+    "preopen-coverage": "npm test",
+    "open-coverage": "open ./coverage/lcov-report/index.html",
+    "lint": "eslint . --ext .ts",
+    "lint-fix": "npm run lint -- --fix",
+    "prestart": "npm run lint && npm run build",
+    "start": "ts-node .",
+    "pretest": "npm run lint",
+    "test": "jest",
+    "test-watch": "npm test -- --watchAll"
+  },
+  "dependencies": {
+    "axios": "^1.2.0",
+    "console-table-printer": "^2.11.1",
+    "dotenv": "^16.0.3",
+    "xmldom": "^0.6.0"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/dotenv": "^8.2.0",
+    "@types/jest": "^29.2.4",
+    "@types/node": "18.11.10",
+    "@types/xmldom": "^0.1.31",
+    "@typescript-eslint/eslint-plugin": "^5.45.1",
+    "eslint": "^8.29.0",
+    "eslint-config-standard-with-typescript": "^23.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.6.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "jest": "^29.3.1",
+    "jest-transform-stub": "^2.0.0",
+    "rimraf": "3.0.2",
+    "ts-jest": "^29.0.3",
+    "ts-node": "10.9.1",
+    "typescript": "^4.9.3"
+  },
+  "lint-staged": {
+    "*.{ts}": [
+      "npm run lint-fix",
+      "git add"
+    ]
+  },
+  "gitHooks": {
+    "pre-commit": "lint-staged",
+    "pre-push": "npm test"
+  }
+}
