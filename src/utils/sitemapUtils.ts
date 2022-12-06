@@ -33,12 +33,27 @@ const requestGetSitemapUrls = async (sitemapUrl: string): Promise<string[]> => {
     if (!sitemap.hasChildNodes() || sitemap.getElementsByTagName('loc').length === 0) {
         return [];
     }
-    const elements = sitemap.getElementsByTagName('loc');
-    const sitemapUrls = Array.from(elements).reduce((urls: string[], element: Element): string[] => {
-        const url = element.textContent?.trim();
+    const elements = [
+        // sitemap index file
+        ...Array.from(sitemap.getElementsByTagName('sitemap')),
+        // sitemap file
+        ...Array.from(sitemap.getElementsByTagName('url'))
+    ];
+    const sitemapUrls = elements.reduce((urls: string[], element: Element): string[] => {
+        // both sitemap index and sitemap files
+        const loc = element.getElementsByTagName('loc')[0];
+        const url = loc.textContent?.trim();
         if (url !== undefined) {
             urls.push(url);
         }
+        // sitemap file
+        // TODO: this isn't working
+        Array.from(element.getElementsByTagNameNS('http://www.w3.org/1999/xhtml', 'link')).forEach((linkElement: Element) => {
+            const href = linkElement.getAttribute('href')?.trim();
+            if (href !== undefined) {
+                urls.push(href);
+            }
+        });
         return urls;
     }, []);
     return sitemapUrls;
