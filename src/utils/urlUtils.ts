@@ -114,7 +114,9 @@ const printUrlStatusTable = (responses: UrlResponse[]): void => {
             { name: 'status', alignment: 'center' },
             { name: 'statusText', alignment: 'left' },
             { name: 'url', alignment: 'left' }
-        ]
+        ],
+        // Sorting status codes descending, to show errors first
+        sort: (row1, row2) => row2.status - row1.status
     });
     const rows = responses.map((response: UrlResponse): IUrlStatusRow => {
         const url = response.config.url ?? response.request.responseURL as string;
