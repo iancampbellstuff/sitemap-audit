@@ -17,6 +17,9 @@ module.exports = {
       lines: 75
     }
   },
+  setupFilesAfterEnv: [
+    '<rootDir>/jest.setup.js'
+  ],
   transform: {
     '^.+\\.tsx?$': [
       'ts-jest',

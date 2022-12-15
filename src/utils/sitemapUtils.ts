@@ -1,6 +1,6 @@
-import { DOMParser } from 'xmldom';
-import { getEnvironmentVariables } from './';
 import axios from 'axios';
+import { DOMParser } from 'xmldom';
+import { getEnvironmentVariables } from './envUtils';
 
 const { SITEMAP_URL, URL_COUNT_THRESHOLD } = getEnvironmentVariables();
 const XML_FILE_EXTENSION = '.xml';
@@ -34,26 +34,26 @@ const requestGetSitemapUrls = async (sitemapUrl: string): Promise<string[]> => {
         return [];
     }
     const elements = [
-        // sitemap index file
+        // Sitemap index file
         ...Array.from(sitemap.getElementsByTagName('sitemap')),
-        // sitemap file
+        // Sitemap file
         ...Array.from(sitemap.getElementsByTagName('url'))
     ];
     const sitemapUrls = elements.reduce((urls: string[], element: Element): string[] => {
-        // both sitemap index and sitemap files
+        // Both sitemap index and sitemap files
         const loc = element.getElementsByTagName('loc')[0];
         const url = loc.textContent?.trim();
         if (url !== undefined) {
             urls.push(url);
-        }
-        // sitemap file
-        // TODO: this isn't working
-        Array.from(element.getElementsByTagNameNS('http://www.w3.org/1999/xhtml', 'link')).forEach((linkElement: Element) => {
-            const href = linkElement.getAttribute('href')?.trim();
-            if (href !== undefined) {
-                urls.push(href);
+            // Sitemap file
+            const linkElements = Array.from(element.getElementsByTagNameNS('http://www.w3.org/1999/xhtml', 'link'));
+            for (const linkElement of linkElements) {
+                const href = linkElement.getAttribute('href')?.trim();
+                if (href !== undefined && !urls.includes(href)) {
+                    urls.push(href);
+                }
             }
-        });
+        }
         return urls;
     }, []);
     return sitemapUrls;
@@ -66,21 +66,18 @@ const requestGetSitemapUrls = async (sitemapUrl: string): Promise<string[]> => {
  * @returns an array of all sitemap URLs
  */
 export const requestGetAllSitemapUrls = async (sitemapUrl: string = SITEMAP_URL): Promise<string[]> => {
-    // The max JavaScript array length is Math.pow(2, 32) - 2
-    if (allSitemapUrls.length >= URL_COUNT_THRESHOLD) {
-        return allSitemapUrls;
-    }
     const sitemapUrls = await requestGetSitemapUrls(sitemapUrl);
-    for (let i = 0; i < sitemapUrls.length; i++) {
-        const url = sitemapUrls[i];
-        if (url.endsWith(XML_FILE_EXTENSION)) {
+    for (const url of sitemapUrls) {
+        if (allSitemapUrls.length >= URL_COUNT_THRESHOLD) {
+            break;
+        } else if (url.endsWith(XML_FILE_EXTENSION)) {
             const recursiveSitemapUrls = await requestGetAllSitemapUrls(url);
             allSitemapUrls.concat(recursiveSitemapUrls);
-        } else {
+        } else if (!allSitemapUrls.includes(url)) {
             allSitemapUrls.push(url);
         }
     }
-    return allSitemapUrls;
+    return allSitemapUrls.sort();
 };
 
 /**
