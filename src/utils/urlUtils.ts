@@ -1,6 +1,6 @@
-import { getEnvironmentVariables, toggleAxiosErrors } from './';
-import { Table } from 'console-table-printer';
 import axios, { AxiosError, AxiosResponse } from 'axios';
+import { Table } from 'console-table-printer';
+import { getEnvironmentVariables, toggleAxiosErrors } from './';
 
 type UrlResponse = AxiosResponse<string, any>;
 type UrlRequest = Promise<UrlResponse>;
@@ -132,10 +132,10 @@ const printUrlStatusTable = (responses: UrlResponse[]): void => {
         data.push(urlStatusRow);
         return data;
     }, []);
-    rows.forEach((row: IUrlStatusRow) => {
+    for (const row of rows) {
         const { data, options } = row;
         table.addRow(data, options);
-    });
+    }
     table.printTable();
 };
 
