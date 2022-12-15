@@ -1,11 +1,11 @@
-import { getEnvironmentVariables, IEnvironmentVariables } from '../envUtils';
+import { getEnvironmentVariables, IEnvironmentVariables, MAX_JAVASCRIPT_ARRAY_LENGTH } from '../envUtils';
 
 describe('envUtils', () => {
     describe('getEnvironmentVariables', () => {
         const evalError = new EvalError('One or more required environment variable(s) was not defined!');
+        const rangeError = new RangeError('The given URL count threshold is out of range!');
         const PROCESS_ENV = process.env;
         beforeEach(() => {
-            jest.resetModules();
             process.env = {
                 ...PROCESS_ENV,
                 URL_COUNT_THRESHOLD: undefined,
@@ -14,6 +14,7 @@ describe('envUtils', () => {
             };
         });
         afterEach(() => {
+            jest.resetModules();
             process.env = PROCESS_ENV;
         });
         it('should get required environment variables', () => {
@@ -40,6 +41,10 @@ describe('envUtils', () => {
             const result = getEnvironmentVariables();
             expect(result).toEqual(environmentVariables);
         });
+        it('should throw an error if the SITEMAP_URL environment variable is undefined', () => {
+            process.env.URL_COUNT_THRESHOLD = '100';
+            expect(() => getEnvironmentVariables()).toThrow(evalError);
+        });
         it('should throw an error if the URL_COUNT_THRESHOLD environment variable is undefined', () => {
             process.env.SITEMAP_URL = 'https://www.google.com/sitemap.xml';
             expect(() => getEnvironmentVariables()).toThrow(evalError);
@@ -49,9 +54,14 @@ describe('envUtils', () => {
             process.env.URL_COUNT_THRESHOLD = 'asdf';
             expect(() => getEnvironmentVariables()).toThrow(evalError);
         });
-        it('should throw an error if the SITEMAP_URL environment variable is undefined', () => {
-            process.env.URL_COUNT_THRESHOLD = '100';
-            expect(() => getEnvironmentVariables()).toThrow(evalError);
+        it('should throw an error if the URL_COUNT_THRESHOLD environment variable is out of range', () => {
+            process.env.SITEMAP_URL = 'https://www.google.com/sitemap.xml';
+            process.env.URL_COUNT_THRESHOLD = '-1';
+            expect(() => getEnvironmentVariables()).toThrow(rangeError);
+            process.env.URL_COUNT_THRESHOLD = '0';
+            expect(() => getEnvironmentVariables()).toThrow(rangeError);
+            process.env.URL_COUNT_THRESHOLD = `${MAX_JAVASCRIPT_ARRAY_LENGTH + 1}`;
+            expect(() => getEnvironmentVariables()).toThrow(rangeError);
         });
     });
 });

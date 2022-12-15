@@ -12,6 +12,8 @@ export interface IEnvironmentVariables {
     TARGET_BASE_URL?: string;
 }
 
+export const MAX_JAVASCRIPT_ARRAY_LENGTH = Math.pow(2, 32) - 2;
+
 /**
  * This function validates a given environment variables object.
  *
@@ -25,6 +27,8 @@ const validateEnvironmentVariables = (environmentVariables: IEnvironmentVariable
     } = environmentVariables;
     if (!SITEMAP_URL || !Number.isInteger(URL_COUNT_THRESHOLD)) {
         throw new EvalError('One or more required environment variable(s) was not defined!');
+    } else if (URL_COUNT_THRESHOLD <= 0 || URL_COUNT_THRESHOLD > MAX_JAVASCRIPT_ARRAY_LENGTH) {
+        throw new RangeError('The given URL count threshold is out of range!');
     }
 };
 
