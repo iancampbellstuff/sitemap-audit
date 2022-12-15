@@ -12,6 +12,9 @@ updates:
       day: "monday"
       timezone: "America/New_York"
       time: "15:00"
+    ignore:
+      - dependency-name: "axios"
+        update-types: ["version-update:semver-minor"]
     commit-message:
       prefix: "dependencies"
       prefix-development: "devDependencies"
