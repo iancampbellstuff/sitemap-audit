@@ -116,7 +116,7 @@ const printUrlStatusTable = (responses: UrlResponse[]): void => {
             { name: 'url', alignment: 'left' }
         ]
     });
-    const rows = responses.reduce((data: IUrlStatusRow[], response: UrlResponse): IUrlStatusRow[] => {
+    const rows = responses.map((response: UrlResponse): IUrlStatusRow => {
         const url = response.config.url ?? response.request.responseURL as string;
         const { status, statusText } = response;
         const urlStatusRow = {
@@ -129,9 +129,8 @@ const printUrlStatusTable = (responses: UrlResponse[]): void => {
                 color: status === 200 ? 'green' : 'red'
             }
         };
-        data.push(urlStatusRow);
-        return data;
-    }, []);
+        return urlStatusRow;
+    });
     for (const row of rows) {
         const { data, options } = row;
         table.addRow(data, options);
