@@ -5,6 +5,13 @@ import { requestTestUrls } from '../urlUtils';
 // import emptySitemap from '../__mocks__/emptySitemap.xml';
 import { getEmptySitemap } from '../__mocks__/sitemap';
 
+jest.mock('../envUtils', () => ({
+    getEnvironmentVariables: () => ({
+        SITEMAP_URL: 'https://www.google.com/sitemap.xml',
+        URL_COUNT_THRESHOLD: 100
+    })
+}));
+
 describe('urlUtils', () => {
     const emptySitemap = getEmptySitemap();
     describe('requestTestUrls', () => {
