@@ -1,5 +1,5 @@
 ---
-title: ${{ github.head_ref || github.ref_name }}
+title: ASDF
 ---
 
 ## Overview
