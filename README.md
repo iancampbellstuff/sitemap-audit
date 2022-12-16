@@ -18,4 +18,4 @@ This codebase recursively extracts URLs from a given XML sitemap URL, then print
 3. Run the code with **`npm start`**.
 
 > **Note**
-> The larger the `URL_COUNT_THRESHOLD` value is, the longer it will take to complete. A large value will likely crash the program.
+> The larger the `URL_COUNT_THRESHOLD` value is, the longer it will take to complete. A large value approaching [`2^32 - 2`](https://github.com/iancampbellstuff/sitemap-audit/blob/main/src/utils/envUtils.ts#L15 "https://github.com/iancampbellstuff/sitemap-audit/blob/main/src/utils/envUtils.ts#L15") could possibly crash the program.
