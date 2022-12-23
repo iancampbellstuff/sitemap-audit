@@ -1,6 +1,6 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { Table } from 'console-table-printer';
-import { requestTestUrls } from '../urlUtils';
+import { getOnRejectedUrlHandler, requestTestUrls } from '../urlUtils';
 // TODO: import and use this file instead of using a helper method
 // import emptySitemap from '../__mocks__/emptySitemap.xml';
 import { getEmptySitemap } from '../__mocks__/sitemap';
@@ -13,8 +13,88 @@ jest.mock('../envUtils', () => ({
 }));
 
 describe('urlUtils', () => {
-    const emptySitemap = getEmptySitemap();
+    describe('getOnRejectedUrlHandler', () => {
+        const status = 500;
+        const statusText = 'Internal Server Error';
+        const url = 'https://testing.test';
+        let isAxiosError;
+        beforeEach(() => {
+            isAxiosError = jest.spyOn(axios, 'isAxiosError').mockReturnValue(true);
+        });
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+        it('should handle an axios error with a response', async () => {
+            const error = {
+                response: {
+                    config: {
+                        url
+                    },
+                    status,
+                    statusText
+                }
+            } as any as AxiosError;
+            const urlErrorHandler = await getOnRejectedUrlHandler(error);
+            expect(urlErrorHandler).toEqual({
+                config: {
+                    url
+                },
+                data: '',
+                headers: {},
+                status,
+                statusText
+            });
+        });
+        it('should handle an axios error without a response', async () => {
+            const error = {
+                config: {
+                    url
+                },
+                message: statusText,
+                status
+            } as any as AxiosError;
+            const urlErrorHandler = await getOnRejectedUrlHandler(error);
+            expect(urlErrorHandler).toEqual({
+                config: {
+                    url
+                },
+                data: '',
+                headers: {},
+                status,
+                statusText
+            });
+        });
+        it('should handle an axios error without a response and with a request response URL', async () => {
+            const error = {
+                message: statusText,
+                request: {
+                    responseURL: url
+                },
+                status
+            } as any as AxiosError;
+            const urlErrorHandler = await getOnRejectedUrlHandler(error);
+            expect(urlErrorHandler).toEqual({
+                config: {
+                    url
+                },
+                data: '',
+                headers: {},
+                status,
+                statusText
+            });
+        });
+        it('should throw an error if the given error is not an axios error', async () => {
+            isAxiosError.mockReturnValue(false);
+            const testError = new Error('test error');
+            try {
+                await getOnRejectedUrlHandler(testError);
+            } catch (error) {
+                expect(error).toEqual(testError);
+            }
+        });
+    });
     describe('requestTestUrls', () => {
+        const emptySitemap = getEmptySitemap();
         let get;
         let addRow;
         let printTable;

@@ -26,7 +26,7 @@ const { SITEMAP_URL, TARGET_BASE_URL } = getEnvironmentVariables();
  * @returns an axios response to be handled
  * @throws a given error if it isn't an axios error
  */
-const requestGetUrlErrorHandler = async (error: Error | AxiosError): Promise<UrlResponse> => {
+export const getOnRejectedUrlHandler = async (error: AxiosError | Error): Promise<UrlResponse> => {
     if (axios.isAxiosError(error)) {
         let status: number;
         let statusText: string;
@@ -40,7 +40,7 @@ const requestGetUrlErrorHandler = async (error: Error | AxiosError): Promise<Url
             statusText = error.message;
             url = error.config?.url || error.request?.responseURL as string;
         }
-        const errorResponse: UrlResponse = {
+        const urlResponse: UrlResponse = {
             config: {
                 url
             },
@@ -49,7 +49,7 @@ const requestGetUrlErrorHandler = async (error: Error | AxiosError): Promise<Url
             status,
             statusText
         };
-        return await Promise.resolve(errorResponse);
+        return await Promise.resolve(urlResponse);
     } else {
         console.error(error);
         throw error;
@@ -78,7 +78,7 @@ const getNewUrl = (url: string): string => {
  */
 const getUrlRequests = (urls: string[]): UrlRequest[] => {
     const requests = urls.reduce((requests: UrlRequest[], url: string): UrlRequest[] => {
-        const request = axios.get<string>(getNewUrl(url)).catch(requestGetUrlErrorHandler);
+        const request = axios.get<string>(getNewUrl(url)).catch(getOnRejectedUrlHandler);
         requests.push(request);
         return requests;
     }, []);
