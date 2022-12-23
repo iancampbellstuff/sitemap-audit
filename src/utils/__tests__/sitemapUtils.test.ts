@@ -14,6 +14,13 @@ jest.mock('../envUtils', () => ({
 }));
 
 describe('sitemapUtils', () => {
+    const mockResolved = (get: jest.SpyInstance<Promise<any>>, ...xml: string[]) => {
+        for (const xmlItem of xml) {
+            get.mockResolvedValue({
+                data: JSON.stringify(xmlItem)
+            });
+        }
+    };
     const emptySitemap = getEmptySitemap();
     const sitemap = getSitemap();
     const sitemapIndex = getSitemapIndex();
@@ -27,25 +34,17 @@ describe('sitemapUtils', () => {
             reset();
         });
         it('should return an empty array from an empty sitemap', async () => {
-            get.mockImplementation(() => ({
-                data: JSON.stringify(emptySitemap)
-            }));
+            mockResolved(get, emptySitemap);
             const sitemapUrls = await requestGetAllSitemapUrls();
             expect(sitemapUrls).toHaveLength(0);
         });
         it('should return an array of URLs from a sitemap index', async () => {
-            get.mockImplementationOnce(() => ({
-                data: JSON.stringify(sitemapIndex)
-            })).mockImplementation(() => ({
-                data: JSON.stringify(sitemap)
-            }));
+            mockResolved(get, sitemapIndex, sitemap);
             const sitemapUrls = await requestGetAllSitemapUrls();
             expect(sitemapUrls).toHaveLength(42);
         });
         it('should return an array of URLs from a sitemap', async () => {
-            get.mockImplementation(() => ({
-                data: JSON.stringify(sitemap)
-            }));
+            mockResolved(get, sitemap);
             const sitemapUrls = await requestGetAllSitemapUrls();
             expect(sitemapUrls).toEqual([
                 'https://www.google.com/nonprofits/',
@@ -103,17 +102,11 @@ describe('sitemapUtils', () => {
             reset();
         });
         it('should reset the internal sitemap URL array', async () => {
-            get.mockImplementationOnce(() => ({
-                data: JSON.stringify(sitemapIndex)
-            })).mockImplementation(() => ({
-                data: JSON.stringify(sitemap)
-            }));
+            mockResolved(get, sitemapIndex, sitemap);
             let sitemapUrls = await requestGetAllSitemapUrls();
             expect(sitemapUrls).toHaveLength(42);
             reset();
-            get.mockImplementation(() => ({
-                data: JSON.stringify(emptySitemap)
-            }));
+            mockResolved(get, emptySitemap);
             sitemapUrls = await requestGetAllSitemapUrls();
             expect(sitemapUrls).toHaveLength(0);
         });
