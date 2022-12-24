@@ -36,11 +36,16 @@
             2,
             "always"
         ],
+        "@typescript-eslint/space-before-function-paren": [
+            0,
+            "always"
+        ],
         "@typescript-eslint/strict-boolean-expressions": "off",
         "indent": [
             2,
             4
         ],
-        "no-extra-boolean-cast": "off"
+        "no-extra-boolean-cast": "off",
+        "space-before-function-paren": "off"
     }
 }

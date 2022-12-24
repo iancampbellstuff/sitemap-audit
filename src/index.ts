@@ -1,8 +1,8 @@
-import { requestGetAllSitemapUrls, requestTestUrls } from './utils';
+import { SitemapHandler } from './handlers';
 
 (async () => {
-    const sitemapUrls = await requestGetAllSitemapUrls();
-    await requestTestUrls(sitemapUrls);
+    const sitemapHandler = new SitemapHandler();
+    await sitemapHandler.requestPrintUrlStatusTable();
 })().catch((error) => {
     console.error(error);
 });
