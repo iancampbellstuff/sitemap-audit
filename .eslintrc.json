@@ -42,10 +42,7 @@
             "always"
         ],
         "@typescript-eslint/strict-boolean-expressions": "off",
-        "indent": [
-            2,
-            4
-        ],
+        "indent": "off",
         "no-extra-boolean-cast": "off",
         "space-before-function-paren": "off"
     }

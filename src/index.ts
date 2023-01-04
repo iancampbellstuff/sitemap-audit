@@ -1,8 +1,8 @@
-import { SitemapHandler } from './handlers';
+import { Sitemap } from './models';
 
 (async () => {
-    const sitemapHandler = new SitemapHandler();
-    await sitemapHandler.requestPrintUrlStatusTable();
+    const sitemap = await Sitemap.getInstanceOf();
+    await sitemap.printAudit();
 })().catch((error) => {
     console.error(error);
 });
