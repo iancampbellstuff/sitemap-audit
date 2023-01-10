@@ -1,8 +1,8 @@
-import { requestGetAllSitemapUrls, requestTestUrls } from './utils';
+import { Sitemap } from './models';
 
 (async () => {
-    const sitemapUrls = await requestGetAllSitemapUrls();
-    await requestTestUrls(sitemapUrls);
+    const sitemap = await Sitemap.getInstanceOf();
+    await sitemap.printAudit();
 })().catch((error) => {
     console.error(error);
 });
