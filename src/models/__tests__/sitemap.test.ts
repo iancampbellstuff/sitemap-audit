@@ -19,9 +19,9 @@ jest.mock('../../utils/envUtils', () => ({
 
 describe('sitemap', () => {
     const SITEMAP_URL = 'https://www.google.com/sitemap.xml';
+    // const TARGET_BASE_URL = 'https://www.google-dev-environment.com';
     const emptySitemap = getEmptySitemap();
     const sitemap = getSitemap();
-    // const sitemapIndex = getSitemapIndex();
     describe('Sitemap', () => {
         const mockResponse = (status: number, url: string = SITEMAP_URL, data: string = ''): UrlResponse | AxiosError => {
             const axiosGetSpy: jest.SpyInstance = jest.spyOn(axios, 'get');
@@ -251,18 +251,5 @@ describe('sitemap', () => {
                 });
             });
         });
-        // describe('setChildNode', () => {
-        //     let setChildNode: (sitemapUrl: string, parentNode: ISitemapNode, level: number) => Promise<ISitemapNode>;
-        //     beforeEach(() => {
-        //         setChildNode = Sitemap['setChildNode'];
-        //     });
-        //     afterEach(() => {
-        //         jest.clearAllMocks();
-        //     });
-        //     it('should get a successful response', () => {
-        //         const response = mockResponse(200);
-        //         expect(setChildNode(SITEMAP_URL)).resolves.toEqual(response);
-        //     });
-        // });
     });
 });
