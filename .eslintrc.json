@@ -44,6 +44,18 @@
         "@typescript-eslint/strict-boolean-expressions": "off",
         "indent": "off",
         "no-extra-boolean-cast": "off",
+        "require-jsdoc": [
+            "error",
+            {
+                "require": {
+                    "ArrowFunctionExpression": true,
+                    "ClassDeclaration": true,
+                    "FunctionDeclaration": true,
+                    "FunctionExpression": true,
+                    "MethodDefinition": true
+                }
+            }
+        ],
         "space-before-function-paren": "off"
     }
 }
