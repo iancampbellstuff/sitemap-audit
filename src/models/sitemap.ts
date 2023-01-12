@@ -126,12 +126,14 @@ export class Sitemap {
         };
         if (sitemapUrl.endsWith(Sitemap.XML_FILE_EXTENSION) && status === 200) {
             const xml = this.parser.parseFromString(response.data, 'text/xml');
-            node.xml = xml;
-            const sitemapIsEmpty = !xml?.hasChildNodes() || xml?.getElementsByTagName('loc').length === 0;
-            if (sitemapIsEmpty) {
-                // See https://www.rfc-editor.org/rfc/rfc4918#section-11.2
-                node.status = 422;
-                node.statusText = 'Empty Sitemap';
+            if (xml) {
+                node.xml = xml;
+                const sitemapIsEmpty = !xml.hasChildNodes() || xml.getElementsByTagName('loc').length === 0;
+                if (sitemapIsEmpty) {
+                    // See https://www.rfc-editor.org/rfc/rfc4918#section-11.2
+                    node.status = 422;
+                    node.statusText = 'Empty Sitemap';
+                }
             }
         }
         return node;
@@ -148,6 +150,20 @@ export class Sitemap {
         return childNode;
     }
 
+    private static getElements(node: ISitemapNode): Element[] {
+        const xml = node.xml as Document;
+        let elements: Element[] = [];
+        if (xml) {
+            elements = [
+                // Sitemap index file
+                ...Array.from(xml.getElementsByTagName('sitemap')),
+                // Sitemap file
+                ...Array.from(xml.getElementsByTagName('url'))
+            ];
+        }
+        return elements;
+    };
+
     private async setChildren(node: ISitemapNode, level: number = 0): Promise<void> {
         node.level = level;
         if (this.count++ >= URL_COUNT_THRESHOLD) {
@@ -159,13 +175,7 @@ export class Sitemap {
         if (node.status !== 200) {
             return;
         }
-        const xml = node.xml as Document;
-        const elements = [
-            // Sitemap index file
-            ...Array.from(xml.getElementsByTagName('sitemap')),
-            // Sitemap file
-            ...Array.from(xml.getElementsByTagName('url'))
-        ];
+        const elements = Sitemap.getElements(node);
         for (const element of elements) {
             if (this.count++ >= URL_COUNT_THRESHOLD) {
                 break;
@@ -218,8 +228,8 @@ export class Sitemap {
         return nodes;
     }
 
-    public async printAudit(): Promise<void> {
-        const nodes = await this.flatMap();
+    public printAudit(): void {
+        const nodes = this.flatMap();
         for (const node of nodes) {
             const { level, parentNode, status, statusText, url } = node;
             const data = {
