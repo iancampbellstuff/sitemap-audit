@@ -6,15 +6,32 @@ permissions:
   pull-requests: write # Needed if in a private repository
 
 jobs:
-  worker:
+  dependabot:
     runs-on: ubuntu-latest
+    continue-on-error: false
     if: ${{ github.event.workflow_run.conclusion == 'success' && github.actor == 'dependabot[bot]' }}
     steps:
       - name: Dependabot metadata
         id: metadata
         uses: dependabot/fetch-metadata@v1
         with:
-          github-token: ${{ github.token }}
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Enable auto-merge for Dependabot PRs
+        if: ${{ steps.metadata.outputs.update-type == 'version-update:semver-minor' || steps.metadata.outputs.update-type == 'version-update:semver-patch' }}
+        run: gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  worker:
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.actor == 'dependabot[bot]' }}
+    steps:
+      - name: Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v1
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
       - name: automerge
         if: ${{ steps.metadata.outputs.update-type == 'version-update:semver-minor' || steps.metadata.outputs.update-type == 'version-update:semver-patch' }}
         uses: actions/github-script@0.2.0
