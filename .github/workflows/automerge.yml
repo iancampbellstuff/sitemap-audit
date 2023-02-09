@@ -1,19 +1,16 @@
-name: Auto Merge Dependabot Pull Requests
-on:
-  pull_request:
-    types: [opened, synchronize]
+name: Auto-merge Dependabot
+on: pull_request
+
 permissions:
+  pull-requests: write
   contents: write
-  pull-requests: write # Needed if in a private repository
-env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   automerge:
     runs-on: ubuntu-latest
     if: github.actor == 'dependabot[bot]'
     steps:
-      - name: Auto merge dependabot pull request
-        if: steps.check_dependabot.status == 0
-        uses: peter-evans/enable-pull-request-automerge@v2
+      - uses: peter-evans/enable-pull-request-automerge@v2
         with:
           pull-request-number: ${{ github.event.pull_request.number }}
+          merge-method: squash
