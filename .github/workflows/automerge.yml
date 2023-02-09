@@ -1,16 +1,15 @@
 name: Auto Merge Dependabot Pull Requests
-
 on:
   pull_request:
     types: [opened, synchronize]
-
+permissions:
+  contents: write
+  pull-requests: write # Needed if in a private repository
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 jobs:
   merge:
     runs-on: ubuntu-latest
-
     steps:
       - name: Check if the pull request is from dependabot
         id: check_dependabot
@@ -19,7 +18,6 @@ jobs:
             echo "This pull request is not from dependabot."
             exit 78
           fi
-
       - name: Auto merge dependabot pull request
         if: steps.check_dependabot.status == 0
         uses: peter-evans/automerge-action@v2
