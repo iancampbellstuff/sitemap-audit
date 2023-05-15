@@ -30,7 +30,7 @@
     "@types/axios": "^0.14.0",
     "@types/dotenv": "^8.2.0",
     "@types/jest": "^29.4.0",
-    "@types/node": "^18.15.11",
+    "@types/node": "^20.1.4",
     "@types/xmldom": "^0.1.31",
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "eslint": "^8.38.0",
